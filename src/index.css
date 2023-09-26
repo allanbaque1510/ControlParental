@@ -1,0 +1,195 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
+:root {
+  --fondo: rgb(45, 40, 58);
+  --formularios-back: rgb(56, 51, 95);
+  --nav-back: rgb(30, 29, 41);
+}
+.navPanel{
+  background-color: var(--nav-back);
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+}
+.navPanel img{
+  border-radius: 50%;
+  height: 50px;
+}
+body{
+  padding: 0;
+  margin: 0;
+  font-family: 'Open Sans', sans-serif;
+  background-color: var(--fondo);
+}
+.ventanaCarga{
+  display: flex;
+  font-size: 30px;
+  color: #474963;
+  justify-content: center;
+  align-items: center;
+  height: calc(100vh - 75px);
+  width: 100%;
+}
+.logo{
+  border-radius: 50%;
+  height: 50px;
+}
+.formularios{
+  position: fixed;
+}
+.formularios form{
+  text-align: center;
+  width: 250px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--formularios-back);
+  color: #fff;
+}
+.formularios form input{
+  background-color: transparent;
+  border-radius: 10px;
+  color: white;
+  padding: 3px;
+  border: 1px solid white;
+  margin-block: 2px;
+  margin-inline:10px ;
+}
+.formularios .input-container{
+  width: 90%;
+  position: relative;
+  display: inline-block;
+}
+
+.input-container input{
+  width: 100%;
+}
+.input-container .text{
+  pointer-events: none;
+  font-size: 0.8rem;
+  position: absolute;
+  top: 50%;
+  right: 0px; /* Ajusta la distancia del texto desde el borde derecho */
+  transform: translateY(-50%);
+  color: #999; /* Color del texto */
+}
+.inputImg img{
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+}
+.input-container .icon{
+  pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 20px; /* Ajusta la distancia del texto desde el borde derecho */
+  transform: translateY(-50%);
+  color: #d4d2d2; /* Color del texto */
+}
+.btnCerrar{
+  cursor: pointer;
+  border: none;
+  padding-block: 1px;
+  padding-inline: 5px ;
+  position: absolute;
+  right: 0;
+  font-weight: 800;
+  color: rgb(250, 227, 211);
+  background-color: transparent;
+  border-top-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  transition: all ease .3s;
+}
+.btnCerrar:hover{
+  background-color: red;
+  color:white
+}
+.errorMessage{
+  text-align: center;
+  font-size: 0.8rem;
+  margin-bottom: 2px;
+  border-radius: 4px;
+  background-color: #ce1d25;
+}
+.formularios form button[type=submit]{
+  cursor: pointer;
+  align-self: flex-end; /* Alinea el botón a la derecha */
+  margin-top: 10px; 
+  color: white;
+  padding: 10px;
+  border: none;
+  border-top-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+  background-color: rgb(23, 22, 31);
+  transition: all ease .4s;
+}
+.formularios form button[type=submit]:hover{
+
+  background-color: rgb(44, 143, 105);
+}
+.formularios form a{
+  font-size: 0.8rem;
+  text-decoration: none;
+  color: white;
+}
+.contIni{
+  justify-content: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  text-align: center;
+  color: white;
+  font-size: 1.1rem;
+  margin-bottom: 60px;
+}
+.contIni p{
+  width: 50%;
+}
+.contIni img{
+  height: 350px;
+}
+.navBar{
+  padding: 10px;
+  background-color: var(--nav-back);
+  display: flex;
+  justify-content: space-between;
+}
+.infoUserPanel{
+  color: white;
+}
+.infoUserPanel img{
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+}
+.btnReg{
+  margin-inline: 10px;
+  font-size: 1.3rem;
+  cursor: pointer;
+  color: aliceblue;  
+  padding: 10px;
+  border: 1px solid rgb(56, 60, 82);
+  border-radius: 5px;
+  background-color: rgb(28, 25, 49);
+}
+.btnAnchor{
+  margin-inline: 10px;
+  cursor: pointer;
+  font-size: 1.3rem;
+  color: aliceblue;  
+  border: none;
+  background: none;
+}
+footer{
+  display: flex;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  height: 60px;
+  width: 100%;
+  background-color: rgb(24, 23, 36);
+  color: #fff; /* Cambia el color de texto según tus preferencias */
+  text-align: center;
+  padding: 5px; /* Espacio alrededor del contenido del footer */
+  justify-content:center;
+  flex-direction: column;
+}
