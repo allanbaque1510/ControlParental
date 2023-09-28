@@ -1,10 +1,15 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans&display=swap');
 :root {
   --fondo: rgb(45, 40, 58);
-  --formularios-back: rgb(56, 51, 95);
+  --formularios-back: rgb(39, 35, 65);
   --nav-back: rgb(30, 29, 41);
+  --border:rgb(56, 60, 82);
+  --formFontColor:rgb(206, 209, 230);
+  --cajas:  rgb(29, 26, 41);
 }
 .navPanel{
+  user-select: none;
+  margin: 0px;
   background-color: var(--nav-back);
   padding: 10px;
   display: flex;
@@ -36,9 +41,21 @@ body{
 .formularios{
   position: fixed;
 }
+.contAvatar{
+  display: flex;
+  justify-content: center;
+}
+.contAvatar img{
+  border-radius: 50%;
+  margin-inline: 15px;
+  margin-bottom: 20px;
+  width: 100px;
+  height: 100px;
+}
 .formularios form{
+  user-select: none;
   text-align: center;
-  width: 250px;
+  width: 280px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -48,9 +65,9 @@ body{
 .formularios form input{
   background-color: transparent;
   border-radius: 10px;
-  color: white;
+  color: var(--formFontColor) ;
   padding: 3px;
-  border: 1px solid white;
+  border: 1px solid var(--border);
   margin-block: 2px;
   margin-inline:10px ;
 }
@@ -61,11 +78,17 @@ body{
 }
 
 .input-container input{
+  padding: 10px;
+  font-size: 1.1rem;
   width: 100%;
 }
+.input-container input:focus{
+  outline: 2px solid var(--border);
+}
+
 .input-container .text{
   pointer-events: none;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   position: absolute;
   top: 50%;
   right: 0px; /* Ajusta la distancia del texto desde el borde derecho */
@@ -88,8 +111,8 @@ body{
 .btnCerrar{
   cursor: pointer;
   border: none;
-  padding-block: 1px;
-  padding-inline: 5px ;
+  padding-block: 5px;
+  padding-inline: 10px ;
   position: absolute;
   right: 0;
   font-weight: 800;
@@ -105,7 +128,7 @@ body{
 }
 .errorMessage{
   text-align: center;
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   margin-bottom: 2px;
   border-radius: 4px;
   background-color: #ce1d25;
@@ -148,18 +171,92 @@ body{
   height: 350px;
 }
 .navBar{
+  user-select: none;
   padding: 10px;
   background-color: var(--nav-back);
   display: flex;
   justify-content: space-between;
 }
-.infoUserPanel{
+.agregarHijo{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin: 10px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: var(--cajas);
+  border-radius: 10px;
+  height: 150px;
+  width: 150px;
+  border: none;
+  color: white;
+ 
+}
+
+.childrenList{
+  display: flex;
+  flex-direction: row;
+}
+.childrenList img{
+  border-radius: 50%;
+  height: 100px;
+  width: 100px;
+}
+
+.contentPanel{
+  flex: 1;
+  padding: 10px;
+}
+.contenedor{
+  display: flex;
+  margin: 0px;
+  width: 100vw;
+  height: calc(100vh - 70px)
+}
+.sidebar{
+  height: calc(100% - 2px) ;
+  width: 200px;
+  border-radius: 1px;
+  border: 1px solid var(--border);
+  background-color: var(--cajas);
   color: white;
 }
-.infoUserPanel img{
-  width: 200px;
-  height: 200px;
+.sidebar img{
+  width: 150px;
+  height: 150px;
   border-radius: 50%;
+}
+.sidebar .infoUser{
+  padding-block: 10px;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+}
+.infoUser .userName{
+  font-size: 1rem;
+  font-weight: 700;
+}
+.infoUser .datos{
+  font-size: .9rem;
+}
+.datosInfo{
+  display: flex;
+  padding-inline: 5px;
+  flex-direction: column;
+}
+.datosInfo .datos{
+  font-size: .9rem;
+  margin-left: 10px;
+}
+.infoUser hr{
+  width: 100%;
+  height: 1px;
+  background-color: var(--border);
+  border: none;
 }
 .btnReg{
   margin-inline: 10px;
@@ -167,9 +264,9 @@ body{
   cursor: pointer;
   color: aliceblue;  
   padding: 10px;
-  border: 1px solid rgb(56, 60, 82);
+  border: 1px solid var(--border);
   border-radius: 5px;
-  background-color: rgb(28, 25, 49);
+  background-color: var(--cajas);
 }
 .btnAnchor{
   margin-inline: 10px;

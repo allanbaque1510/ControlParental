@@ -1,10 +1,10 @@
 import {auth,imageDB,DB} from '../database'
 import { useContext, createContext,useState,useEffect } from 'react'
-import { doc, setDoc } from "firebase/firestore"; 
+import { doc, setDoc,getDoc,addDoc,getDocs,collection, query, where } from "firebase/firestore"; 
 import { createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut, onAuthStateChanged,updateProfile } from 'firebase/auth'
 
 import {ref,uploadBytes} from 'firebase/storage'
-import Cookies from 'js-cookie';
+
 export const AuthContext = createContext()
 
 export const useAuth = ()=>{
@@ -16,6 +16,8 @@ export const useAuth = ()=>{
 }
 export function AuthProvider ({children}){
     const [user,setUser] = useState(null)
+    const [userChildren,setUserChildren] = useState(null)
+    const [userData,setUserData] = useState(null)
     const [errorMessage,setErrorMessage] = useState(null)
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [cargandoDatos, setCargandoDatos] = useState(false)
@@ -39,7 +41,7 @@ export function AuthProvider ({children}){
                     const imgRef = ref(imageDB,`files/imgProfile/${response.user.uid}`)
                     const responseImage = await uploadBytes(imgRef, imagen)
        
-                    nuevosDatos.imagenRef =responseImage.metadata.fullPath
+            
                     updateProfile(auth.currentUser, {
                         photoURL: responseImage.metadata.fullPath, // Reemplaza con la URL de la foto que deseas agregar
                     })
@@ -56,7 +58,8 @@ export function AuthProvider ({children}){
 
             await setDoc(doc(DB, "usuarios", response.user.uid), nuevosDatos);
 
-            
+            await obtenerDatos(response.user.uid)
+
             setLoading(false)
             setCargandoDatos(false)
             setIsAuthenticated(true)
@@ -86,12 +89,38 @@ export function AuthProvider ({children}){
                     setErrorMessage({form:'Register', message:'Demasiados intentos de conexion'})
                     // Manejar el error de demasiados intentos
                   break;
-                default:
-                    setErrorMessage({form:'Register', message:'Error en el sistema'})
-                    // Manejar otros errores no especificados
-                  break;
               }
         }
+    }
+    const obtenerDatos = async(uid)=>{
+      const docRef = doc(DB, "usuarios", uid);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        setUserData(docSnap.data());
+      }
+    }
+    const obtenerHijos=async(uid)=>{
+      try {
+        let listaHijos = []
+        const q = query(collection(DB, "children"), where("padre", "==", uid));
+        const querySnapshot = await getDocs(q);
+        querySnapshot.forEach((doc) => {
+          listaHijos.push(doc.data());
+        });
+        setUserChildren(listaHijos)
+      } catch (error) {
+        console.log(error)  
+      }
+    }
+
+    const childrenRegister = async(datos)=>{
+      try {
+        await addDoc(collection(DB, "children"), datos);
+        await obtenerHijos(user.uid);
+      } catch (error) {
+        console.log(error.code)
+      }
     }
 
     const login =async(datos)=>{
@@ -99,6 +128,8 @@ export function AuthProvider ({children}){
             const response = await signInWithEmailAndPassword(auth,datos.email,datos.password)
             console.log(response.user)
             setUser( response.user)
+            await obtenerDatos(response.user.uid)
+            await obtenerHijos(user.uid);
             setIsAuthenticated(true);
         } catch (error) {
             switch (error.code) {
@@ -127,22 +158,26 @@ export function AuthProvider ({children}){
                     setErrorMessage({form:'Login', message:'Demasiados intentos de conexion'})
                     // Manejar el error de demasiados intentos
                   break;
-                default:
-                    setErrorMessage({form:'Login', message:'Error en el sistema'})
-                    // Manejar otros errores no especificados
-                  break;
               }
         }
     }
+
+
+
+
     useEffect(() => {
-      if(errorMessage){
-        setTimeout(() => {
-            setErrorMessage(null)
-        }, 5000);
-      }
-    
-      
-    }, [errorMessage])
+      let timeoutId;
+      if (errorMessage) {
+        timeoutId = setTimeout(() => {
+          setErrorMessage(null);
+        }, 4000);}
+
+      return () => {
+        if (timeoutId) {
+          clearTimeout(timeoutId);
+        }};
+
+    }, [errorMessage]);
     
     const logOut= async()=>{
          await signOut(auth)
@@ -153,10 +188,11 @@ export function AuthProvider ({children}){
         setLoading(true)
         
         const checkToken = async()=>{    
-            onAuthStateChanged(auth,currentUser=>{
+            onAuthStateChanged(auth,async currentUser=>{
                 
                 if(currentUser){
-                    console.log(currentUser)
+                    await obtenerDatos(currentUser.uid)
+                    await obtenerHijos(currentUser.uid);
                     setIsAuthenticated(true)
                     setUser(currentUser)
                     setLoading(false)
@@ -175,7 +211,7 @@ export function AuthProvider ({children}){
 
     return (
         <AuthContext.Provider 
-            value={{register,login,logOut,user,isAuthenticated,loading,cargandoDatos,errorMessage}}
+            value={{register,login,logOut,childrenRegister,userChildren,user,isAuthenticated,loading,cargandoDatos,errorMessage,userData}}
         >
             {children}
         </AuthContext.Provider>

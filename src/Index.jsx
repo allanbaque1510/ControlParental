@@ -5,6 +5,7 @@ import logo from './assets/logo.jpeg'
 import imProfile from './assets/imgProfile.png' 
 import { useAuth } from './context/AuthContext';
 import imgParental from './assets/controlParental.png' 
+import { differenceInYears } from 'date-fns';
 
 function Index() {
     const inputImgRef = useRef(null)
@@ -13,8 +14,10 @@ function Index() {
   const [formulario, setFormulario] = useState(0)
   const [tipoInput, setTipoInput] = useState('text');
   const [inputState, setInputState] = useState("")
+  const [errorMessage, setErrorMessage ] = useState('')
 
   const navigate = useNavigate()
+  const fechaActual = new Date();
 
   const [imagen, setImagen] = useState(null);
 
@@ -101,6 +104,25 @@ function Index() {
     }
     const handleReg = (e) =>{
         e.preventDefault()
+        if(!datosFormulario.firstname.includes(' ') || datosFormulario.firstname.length < 8){
+          return setErrorMessage('Debes tener los dos nombres')
+        }
+        if(!datosFormulario.secondname.includes(' ') || datosFormulario.secondname.length < 8){
+          return setErrorMessage('Debes tener los dos apellidos')
+        }
+        if(datosFormulario.cedula.length < 10){
+          return setErrorMessage('Debes ingresar una cedula valida')
+        }
+
+        if(datosFormulario.cellphone.length < 10){
+          return setErrorMessage('Debes ingresar un numero valido')
+        }
+        if(differenceInYears(fechaActual, (new Date(datosFormulario.date))) < 17  ){
+          return setErrorMessage('Debes ser mayor de edad')
+        }
+
+
+
         auth.register(datosFormulario,imagen)
     }
     const clickImg = ()=>{
@@ -140,6 +162,7 @@ function Index() {
             <button className='btnCerrar' type="button" onClick={cerrarForm}>X</button>
 
           <h3>CREA TU CUENTA</h3>
+          {errorMessage?(<span className='errorMessage'>{errorMessage}</span>) :null}
           {auth.errorMessage?(auth.errorMessage.form === 'Register'?<span className='errorMessage'>{auth.errorMessage.message}</span>:null) :null}
 
           <div className="input-container">
