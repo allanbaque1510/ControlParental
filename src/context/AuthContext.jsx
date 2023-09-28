@@ -106,7 +106,7 @@ export function AuthProvider ({children}){
         const q = query(collection(DB, "children"), where("padre", "==", uid));
         const querySnapshot = await getDocs(q);
         querySnapshot.forEach((doc) => {
-          listaHijos.push(doc.data());
+          listaHijos.push({...doc.data(),id:doc.id});
         });
         setUserChildren(listaHijos)
       } catch (error) {

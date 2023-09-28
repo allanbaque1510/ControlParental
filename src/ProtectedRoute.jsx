@@ -5,7 +5,7 @@ import { useAuth } from './context/AuthContext'
 import logo from './assets/logo.jpeg' 
 import DotLoader  from "react-spinners/DotLoader";
 const ProtectedRoute = () => {
-    const {user,isAuthenticated,loading} = useAuth();
+    const {isAuthenticated,loading} = useAuth();
 
     if(loading) return (
         <>

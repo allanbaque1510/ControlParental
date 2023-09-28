@@ -19,6 +19,9 @@ const Panel = () => {
     const [formStatus, setFormStatus] = useState(false);
     const [errorMessage, setErrorMessage ] = useState('')
     const [tipoInput, setTipoInput] = useState('text');
+    const [activarControl, setActivarControl] = useState(false);
+    const [hijoActivo, setHijoActivo] = useState(null);
+    const [btnStatus, setBtnStatus] = useState(false)
 
     const fechaActual = new Date();
     const [datosFormulario, setDatosFormulario] = useState({
@@ -36,18 +39,23 @@ const Panel = () => {
       }
     useEffect(() => {
         if(!cargandoDatos){
-            const rutaImagen = user.photoURL
-            // Obtén la referencia a la imagen en Firebase Storage
-            const imgRef = ref(imageDB, rutaImagen);
-            // Obtiene la URL de descarga de la imagen
-            getDownloadURL(imgRef)
-              .then((url) => {
-                // Establece la URL de la imagen en el estado
-                setImagenURL(url);
-              })
-              .catch((error) => {
-                console.error('Error al obtener la URL de la imagen:', error);
-              });
+            if(user.photoURL !== null){
+
+                const rutaImagen = user.photoURL
+                // Obtén la referencia a la imagen en Firebase Storage
+                const imgRef = ref(imageDB, rutaImagen);
+                // Obtiene la URL de descarga de la imagen
+                getDownloadURL(imgRef)
+                .then((url) => {
+                    // Establece la URL de la imagen en el estado
+                    setImagenURL(url);
+                })
+                .catch((error) => {
+                    console.error('Error al obtener la URL de la imagen:', error);
+                });
+            }else{
+            setImagenURL(imProfile)
+            }
         }else{
             setImagenURL(imProfile)
         }
@@ -77,7 +85,6 @@ const Panel = () => {
           }};
           
       }, [errorMessage]);
-      console.log(userChildren)
     const enviarDatos =async(event)=>{
         setErrorMessage('')
         event.preventDefault()
@@ -96,10 +103,17 @@ const Panel = () => {
 
 
         const datos = {...datosFormulario,avatar:avatarState,padre:user.uid}
+        setBtnStatus(true)
         await childrenRegister(datos)
-        
+        cerrarForm()
+        setBtnStatus(false)
+
     }
-    const formularioAgg = <form onSubmit={enviarDatos}>
+    const controlHijo = (indice)=>{
+        setHijoActivo(userChildren[indice])
+        setActivarControl(true)
+    }
+    const formularioAgg = <form style={{position:'absolute', bottom:'-320px'}} onSubmit={enviarDatos}>
         <button className='btnCerrar' type="button" onClick={cerrarForm}>X</button>
         <h3>Seleccione un avatar</h3>
         <div className="contAvatar">
@@ -137,7 +151,7 @@ const Panel = () => {
             </>                
             :null}
           </div>
-        <button type="submit">GUARDAR</button>
+        <button disabled={btnStatus} type="submit">{btnStatus?'CARGANDO...':'GUARDAR'}</button>
     </form>
     if(cargandoDatos){
         return (
@@ -177,15 +191,31 @@ const Panel = () => {
                         </div>
                     </section>
                     <section className='contentPanel'>
-                        <div className="childrenList">
-                            <div className="agregar">
+                        <div  style={activarControl?{ transform:'translateX(0%)' }:{ transform:'translateX(-100%)'}}  className="controlChildren">
+                            <div className="control">
+                                {hijoActivo!==null?
+                                <>
+                                <span className='titulo'><img src={hijoActivo.avatar ==1?boy:(hijoActivo.avatar==2?girl:null)} alt="avatar del hijo" />{hijoActivo.nombres} {hijoActivo.apellidos} - {differenceInYears(fechaActual, (new Date(hijoActivo.date)))} años <span style={{userSelect:'none'}} className='btnCerrar' onClick={()=>setActivarControl(false)}>x</span></span>
+                                <div className='contBotonesControl'>
+                                    <button  type="button">SMS</button>
+                                    <button type="button">GPS</button>
+                                    <button type="button">LLAMADA</button>
+                                    <button type="button">CAMARA</button>
+                                </div>
+                                </>
+                                :
+                                null}
+                            </div>
+                        </div>
+                        <div style={activarControl?{ transform:'translateX(0%)' }:{ transform:'translateX(-100%)'}}  className="childrenList">
+                            <div  className="agregar">
                                 <button type="button" style={{ fontSize:'130px'}} onClick={()=>setFormStatus(!formStatus)} className='agregarHijo'> <FcPlus/></button>
                                 {formStatus?<div className="formularios"> {formularioAgg}</div>:null}
                             </div>
 
                             {userChildren!==null ? 
                                 userChildren.map((children,index)=>(
-                                    <button className='agregarHijo' key={index}>
+                                    <button style={{userSelect:'none'}} className='agregarHijo' onClick={()=>controlHijo(index)} key={index}>
                                         <img src={children.avatar ==1?boy:(children.avatar==2?girl:null)} alt="" />
                                         <span className='nameChildrens'>
                                             {children.nombres}
@@ -196,7 +226,7 @@ const Panel = () => {
                                     </button>
                                 ))
                                 : null}
-                                </div>
+                        </div>
 
                     </section>
                 </div>

@@ -14,6 +14,7 @@ function Index() {
   const [formulario, setFormulario] = useState(0)
   const [tipoInput, setTipoInput] = useState('text');
   const [inputState, setInputState] = useState("")
+  const [aceptarTerminos, setAceptarTerminos] = useState(false)
   const [errorMessage, setErrorMessage ] = useState('')
 
   const navigate = useNavigate()
@@ -29,7 +30,20 @@ function Index() {
   useEffect(()=>{
     if(auth.isAuthenticated && !auth.loading) navigate('/panel')
   },[auth.isAuthenticated])
+  useEffect(() => {
+    let timeoutId;
+    if (errorMessage) {
+      timeoutId = setTimeout(() => {
+        setErrorMessage(null);
+      }, 4000);}
 
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }};
+
+  }, [errorMessage]);
+  
   const [datosFormulario, setDatosFormulario] = useState({
     firstname: '',
     secondname: '',
@@ -104,6 +118,7 @@ function Index() {
     }
     const handleReg = (e) =>{
         e.preventDefault()
+        setErrorMessage('')
         if(!datosFormulario.firstname.includes(' ') || datosFormulario.firstname.length < 8){
           return setErrorMessage('Debes tener los dos nombres')
         }
@@ -119,6 +134,9 @@ function Index() {
         }
         if(differenceInYears(fechaActual, (new Date(datosFormulario.date))) < 17  ){
           return setErrorMessage('Debes ser mayor de edad')
+        }
+        if(!aceptarTerminos){
+          return setErrorMessage('Debes aceptar los terminos y condiciones para continuar')
         }
 
 
@@ -245,6 +263,9 @@ function Index() {
             
             <input type="file" accept="image/*" ref={inputImgRef} style={{display:'none'}} onChange={handleImagenSeleccionada} />
           </div>
+          <span className='termCond'>
+            <input type="checkbox" name="condiciones" checked={aceptarTerminos} onChange={()=>setAceptarTerminos(!aceptarTerminos)} id="condiciones" /> <span>He aceptado los terminos y condiciones</span>
+          </span>
           <button type="submit">GUARDAR DATOS</button>
         </form> ;
 const formulariosData =(numero)=>{
