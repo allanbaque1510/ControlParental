@@ -1,7 +1,7 @@
 import {auth,imageDB,DB} from '../database'
 import { useContext, createContext,useState,useEffect } from 'react'
 import { doc, setDoc,getDoc,addDoc,getDocs,collection, query, where } from "firebase/firestore"; 
-import { createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut, onAuthStateChanged,updateProfile,sendEmailVerification } from 'firebase/auth'
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail, onAuthStateChanged,updateProfile,sendEmailVerification } from 'firebase/auth'
 
 import {ref,uploadBytes} from 'firebase/storage'
 
@@ -23,6 +23,7 @@ export function AuthProvider ({children}){
     const [cargandoDatos, setCargandoDatos] = useState(false)
     const [loading, setLoading] = useState(true)
     const [stateVerifyEmail,setStateVerifyEmail] = useState(false)
+    const [stateResetPassword,setStateResetPassword] = useState(false)
 
     const register =async(datos,imagen)=>{
         setLoading(true)
@@ -133,6 +134,37 @@ export function AuthProvider ({children}){
     }
 
 
+    const resetPassword = (email)=>{
+      sendPasswordResetEmail(auth, email)
+      .then(() => {
+        setStateResetPassword(true)
+      })
+      .catch((error) => {
+        switch (error.code) {
+          case 'auth/invalid-email':
+            // Manejar el error de correo electrónico inválido
+              setErrorMessage({form:'resetPassword', message:'Email invalido'})
+            break;
+          case 'auth/user-disabled':
+              setErrorMessage({form:'resetPassword', message:'Error, cuenta deshabilitada'})
+              // Manejar el error de cuenta deshabilitada
+            break;
+          case 'auth/user-not-found':
+              setErrorMessage({form:'resetPassword', message:'Usuario no encontrado'})
+              // Manejar el error de usuario no encontrado
+            break;
+          case 'auth/network-request-failed':
+              setErrorMessage({form:'resetPassword', message:'Falla en la conexion'})
+              // Manejar el error de falla de red
+            break;
+          case 'auth/too-many-requests':
+              setErrorMessage({form:'resetPassword', message:'Demasiados intentos de conexion'})
+              // Manejar el error de demasiados intentos
+            break;
+        }
+      });
+    }
+
     const login =async(datos)=>{
         try {
             const response = await signInWithEmailAndPassword(auth,datos.email,datos.password)
@@ -180,7 +212,7 @@ export function AuthProvider ({children}){
       if (errorMessage) {
         timeoutId = setTimeout(() => {
           setErrorMessage(null);
-        }, 4000);}
+        }, 3000);}
 
       return () => {
         if (timeoutId) {
@@ -221,7 +253,7 @@ export function AuthProvider ({children}){
 
     return (
         <AuthContext.Provider 
-            value={{register,verificarEmail,login,logOut,childrenRegister,stateVerifyEmail,userChildren,user,isAuthenticated,loading,cargandoDatos,errorMessage,userData}}
+            value={{register,verificarEmail,resetPassword,login,logOut,childrenRegister,stateResetPassword,stateVerifyEmail,userChildren,user,isAuthenticated,loading,cargandoDatos,errorMessage,userData}}
         >
             {children}
         </AuthContext.Provider>

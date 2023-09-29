@@ -193,10 +193,14 @@ body{
 
   background-color: rgb(44, 143, 105);
 }
-.formularios form a{
+.formularios form button[type=button]{
+  padding: 10px;
+  cursor: pointer;
   font-size: 0.8rem;
-  text-decoration: none;
-  color: white;
+  background-color: transparent;
+  border: none;
+
+  color: var(--formFontColor);
 }
 .contIni{
   justify-content: center;
@@ -354,6 +358,40 @@ body{
   cursor:no-drop;
   color: #999;
   background-color: var(--fondo);
+}
+.resetPassword{
+  z-index: 10;
+  height: 100vh;
+  width: 100vw;
+  background-color: #00000093;
+  position: fixed;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  transition: all .3s ease;
+}
+.resetPassword form input{
+  background-color: transparent;
+  border-radius: 10px;
+  font-size: 20px;
+  outline: 2px solid var(--border);
+  color: var(--formFontColor) ;
+  padding: 3px;
+  border: 1px solid var(--border);
+  margin-block: 2px;
+  margin-inline:10px ;
+  margin-bottom: 20px;
+}
+.resetPassword form{
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  color: var(--formFontColor);
+  background-color: var(--formularios-back);
+  padding-inline: 20px;
+  padding-bottom: 20px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
 }
 
 .btnReg:disabled:hover{

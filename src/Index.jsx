@@ -15,7 +15,9 @@ function Index() {
   const [tipoInput, setTipoInput] = useState('text');
   const [inputState, setInputState] = useState("")
   const [aceptarTerminos, setAceptarTerminos] = useState(false)
+  const [restablecerContraseña, setRestablecerContraseña] = useState(false)
   const [errorMessage, setErrorMessage ] = useState('')
+  const [emailReset, setEmailReset ] = useState('')
 
   const navigate = useNavigate()
   const fechaActual = new Date();
@@ -152,7 +154,7 @@ function Index() {
           <h3>INICIAR SESION</h3>
           {auth.errorMessage?(auth.errorMessage.form === 'Login'?<span className='errorMessage'>{auth.errorMessage.message}</span>:null) :null}
           <div className="input-container">
-            <input type="email" onClick={()=>{setInputState('loginEmail')}} required='true' value={datosLogin.email}  onChange={valoresLogin} name="email" />
+            <input type="email" onClick={()=>{setInputState('loginEmail')}} required={true} value={datosLogin.email}  onChange={valoresLogin} name="email" />
             {(inputState !== 'loginEmail' && datosLogin.email.length <=0)?
             <>
                 <span className='icon'><BiEnvelope/></span>
@@ -162,7 +164,7 @@ function Index() {
             :null}
           </div>
           <div className="input-container">
-            <input type="password" onClick={()=>{setInputState('loginPassword')}} required='true' value={datosLogin.password}  onChange={valoresLogin} name="password" />
+            <input type="password" onClick={()=>{setInputState('loginPassword')}} required={true} value={datosLogin.password}  onChange={valoresLogin} name="password" />
             {(inputState !== 'loginPassword' && datosLogin.password.length <=0)?
             <>
                 <span className='icon'><BiLock/></span>
@@ -171,7 +173,7 @@ function Index() {
                 
             :null}
           </div>
-          <a href="">¿Ha olvidado la contraseña?</a>
+          <button type='button' onClick={()=>setRestablecerContraseña(true)}>¿Ha olvidado la contraseña?</button>
           <button type="submit">INGRESAR</button>
         </form>;
     
@@ -184,7 +186,7 @@ function Index() {
           {auth.errorMessage?(auth.errorMessage.form === 'Register'?<span className='errorMessage'>{auth.errorMessage.message}</span>:null) :null}
 
           <div className="input-container">
-            <input type="text" onClick={()=>{setInputState('firstname')}} required='true' value={datosFormulario.firstname}  onChange={valoresRegistro} name="firstname" />
+            <input type="text" onClick={()=>{setInputState('firstname')}} required={true} value={datosFormulario.firstname}  onChange={valoresRegistro} name="firstname" />
             {(inputState !== 'firstname' && datosFormulario.firstname.length <=0)?
             <>
                 <span className='icon'><BiUser/></span>
@@ -194,7 +196,7 @@ function Index() {
             :null}
           </div>
           <div className="input-container">
-            <input type="text" onClick={()=>{setInputState('secondname')}} required='true' value={datosFormulario.secondname} onChange={valoresRegistro} name="secondname" />
+            <input type="text" onClick={()=>{setInputState('secondname')}} required={true} value={datosFormulario.secondname} onChange={valoresRegistro} name="secondname" />
             {inputState !== 'secondname' && datosFormulario.secondname.length <=0?
             <>
               <span className='icon'><BiUser/></span>
@@ -203,7 +205,7 @@ function Index() {
             :null}
           </div>
           <div className="input-container">
-            <input type="number" onClick={()=>{setInputState('cedula')}} required='true'  value={datosFormulario.cedula} onChange={valoresRegistro} name="cedula" />
+            <input type="number" onClick={()=>{setInputState('cedula')}} required={true}  value={datosFormulario.cedula} onChange={valoresRegistro} name="cedula" />
             {inputState !== 'cedula'&& datosFormulario.cedula.length <=0?
             <>
                 <span className='icon'><BiIdCard/></span>
@@ -215,7 +217,7 @@ function Index() {
 
           </div>
           <div className="input-container">
-            <input type={tipoInput} onClick={()=>{setInputState('date');  setTipoInput('date')}} required='true' onBlur={()=>{setTipoInput('text')}} value={datosFormulario.date} onChange={valoresRegistro} name="date" />
+            <input type={tipoInput} onClick={()=>{setInputState('date');  setTipoInput('date')}} required={true} onBlur={()=>{setTipoInput('text')}} value={datosFormulario.date} onChange={valoresRegistro} name="date" />
          
             {inputState !== 'date'&& datosFormulario.date.length <=0?
             <>
@@ -226,7 +228,7 @@ function Index() {
           </div>
 
           <div className="input-container">
-            <input type="email" onClick={()=>{setInputState('email')}} required='true' value={datosFormulario.email} onChange={valoresRegistro} name="email" />
+            <input type="email" onClick={()=>{setInputState('email')}} required={true} value={datosFormulario.email} onChange={valoresRegistro} name="email" />
             
             {inputState !== 'email'&& datosFormulario.email.length <=0?
             <>
@@ -237,7 +239,7 @@ function Index() {
 
           </div>
           <div className="input-container">
-            <input type="number" onClick={()=>{setInputState('cellphone')}} required='true' value={datosFormulario.cellphone} onChange={valoresRegistro} name="cellphone" />
+            <input type="number" onClick={()=>{setInputState('cellphone')}} required={true} value={datosFormulario.cellphone} onChange={valoresRegistro} name="cellphone" />
             
             {inputState !== 'cellphone' && datosFormulario.cellphone.length <=0 ?
             <>
@@ -248,7 +250,7 @@ function Index() {
 
           </div>
           <div className="input-container">
-            <input type="password" onClick={()=>{setInputState('password')}} required='true' value={datosFormulario.password} onChange={valoresRegistro} name="password" />
+            <input type="password" onClick={()=>{setInputState('password')}} required={true} value={datosFormulario.password} onChange={valoresRegistro} name="password" />
        
             {inputState !== 'password'&& datosFormulario.password.length <=0 ?
             <>
@@ -275,6 +277,17 @@ const formulariosData =(numero)=>{
 
   return (
     <>
+    <div style={restablecerContraseña?null:{opacity:'0', height:'0%', width:'0%', top:'-20%', right:'-20%'}} className="resetPassword">
+      <form onSubmit={(e)=>{e.preventDefault();auth.resetPassword(emailReset)}}>
+        <button className='btnCerrar' type="button" onClick={()=>setRestablecerContraseña(false)}>X</button>
+        <h2>Ingrese el correo para restablecer la contraseña</h2>
+        {auth.errorMessage?(auth.errorMessage.form === 'resetPassword'?<span className='errorMessage'>{auth.errorMessage.message}</span>:null) :null}
+
+        <input type="email" value={emailReset} onChange={(e)=>{setEmailReset(e.target.value)}} required={true} name="emailReset" id="emailReset" />
+        <button  disabled={auth.stateResetPassword} className='btnReg' type="submit">{auth.stateResetPassword?'Email enviado':'Restablecer contraseña'}</button>
+        
+      </form>
+    </div>
       <nav className='navBar'>
         <img className='logo' src={logo} alt="logo" />
         {/* <button className='btnAnchor' type="button">¿Quienes somos?</button>
