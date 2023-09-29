@@ -1,7 +1,7 @@
 import {auth,imageDB,DB} from '../database'
 import { useContext, createContext,useState,useEffect } from 'react'
 import { doc, setDoc,getDoc,addDoc,getDocs,collection, query, where } from "firebase/firestore"; 
-import { createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut, onAuthStateChanged,updateProfile } from 'firebase/auth'
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut, onAuthStateChanged,updateProfile,sendEmailVerification } from 'firebase/auth'
 
 import {ref,uploadBytes} from 'firebase/storage'
 
@@ -22,6 +22,7 @@ export function AuthProvider ({children}){
     const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [cargandoDatos, setCargandoDatos] = useState(false)
     const [loading, setLoading] = useState(true)
+    const [stateVerifyEmail,setStateVerifyEmail] = useState(false)
 
     const register =async(datos,imagen)=>{
         setLoading(true)
@@ -123,6 +124,15 @@ export function AuthProvider ({children}){
       }
     }
 
+
+
+    const verificarEmail = ()=>{
+      sendEmailVerification(user) .then(() => {
+        setStateVerifyEmail(true)
+      });
+    }
+
+
     const login =async(datos)=>{
         try {
             const response = await signInWithEmailAndPassword(auth,datos.email,datos.password)
@@ -211,7 +221,7 @@ export function AuthProvider ({children}){
 
     return (
         <AuthContext.Provider 
-            value={{register,login,logOut,childrenRegister,userChildren,user,isAuthenticated,loading,cargandoDatos,errorMessage,userData}}
+            value={{register,verificarEmail,login,logOut,childrenRegister,stateVerifyEmail,userChildren,user,isAuthenticated,loading,cargandoDatos,errorMessage,userData}}
         >
             {children}
         </AuthContext.Provider>

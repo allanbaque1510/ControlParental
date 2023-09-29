@@ -11,7 +11,7 @@ import boy from './assets/boy.png'
 import { BiUser,BiSolidCalendar,BiCalendarStar,BiPhoneCall } from "react-icons/bi";
 import { FcPlus } from "react-icons/fc";
 const Panel = () => {
-    const {logOut,user,cargandoDatos,userData,userChildren,childrenRegister} = useAuth()
+    const {logOut,user,cargandoDatos,userData,userChildren,childrenRegister,verificarEmail,stateVerifyEmail} = useAuth()
 
     const [inputState, setInputState] = useState("")
     const [imagenURL, setImagenURL] = useState(null);
@@ -109,6 +109,7 @@ const Panel = () => {
         setBtnStatus(false)
 
     }
+    console.log(user)
     const controlHijo = (indice)=>{
         setHijoActivo(userChildren[indice])
         setActivarControl(true)
@@ -153,6 +154,7 @@ const Panel = () => {
           </div>
         <button disabled={btnStatus} type="submit">{btnStatus?'CARGANDO...':'GUARDAR'}</button>
     </form>
+    
     if(cargandoDatos){
         return (
             <>
@@ -190,6 +192,7 @@ const Panel = () => {
                             <span className=''> <BiCalendarStar/> <span className='datos'>{differenceInYears(fechaActual, (new Date(userData.fecha)))} años</span></span>
                         </div>
                     </section>
+                    {user.emailVerified?
                     <section className='contentPanel'>
                         <div  style={activarControl?{ transform:'translateX(0%)' }:{ transform:'translateX(-100%)'}}  className="controlChildren">
                             <div className="control">
@@ -229,6 +232,18 @@ const Panel = () => {
                         </div>
 
                     </section>
+                    :<div className='verifyEmailMessage'>
+                        <div className="messageEmail">
+                                <h1>Verificacion de email</h1>
+                                <hr style={{width:'100%'}}/>
+                                <p>Parece que aun no has verificado tu correo electronico, para verificar debes hacer click en el boton</p>
+                                <br />
+                                
+                                <span><b>Nota:</b> <span>Despues de verificar el correo debes actualizar la pagina para que puedas acceder.</span></span>
+                                <br />
+                                <button type="button" disabled={stateVerifyEmail} onClick={verificarEmail} className='btnReg'>{stateVerifyEmail?'Correo Enviado':'Verificar Email'}</button>
+                        </div>
+                    </div>}
                 </div>
             </div>
         )

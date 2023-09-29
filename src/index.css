@@ -112,6 +112,27 @@ body{
   font-size: .7rem;
   color: var(--formFontColor);
 }
+.verifyEmailMessage{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+}
+.messageEmail{
+  user-select: none;
+  color: white;
+  background-color: var(--cajas);
+  display: flex;
+  padding: 20px;
+  text-align: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  max-width: 60%;
+  border: 2px solid var(--border);
+  border-radius: 5px;
+}
 .termCond{
   margin-block: 10px;
   display: flex;
@@ -327,6 +348,22 @@ body{
   border: 1px solid var(--border);
   border-radius: 5px;
   background-color: var(--cajas);
+  transition: all .2s ease-in;
+}
+.btnReg:disabled{
+  cursor:no-drop;
+  color: #999;
+  background-color: var(--fondo);
+}
+
+.btnReg:disabled:hover{
+  font-size: 1.3rem;
+  color: #999;
+  background-color: var(--fondo);
+}
+.btnReg:hover{
+  font-size: 1.31rem;
+  background-color: var(--border);
 }
 .btnAnchor{
   margin-inline: 10px;
