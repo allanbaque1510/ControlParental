@@ -1,7 +1,7 @@
 import {auth,imageDB,DB} from '../database'
 import { useContext, createContext,useState,useEffect } from 'react'
 import { doc, setDoc,getDoc,addDoc,getDocs,collection, query, where } from "firebase/firestore"; 
-import { createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail, onAuthStateChanged,updateProfile,sendEmailVerification } from 'firebase/auth'
+import { createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,sendPasswordResetEmail, onAuthStateChanged,updateProfile,sendEmailVerification,EmailAuthProvider } from 'firebase/auth'
 
 import {ref,uploadBytes} from 'firebase/storage'
 
@@ -24,7 +24,8 @@ export function AuthProvider ({children}){
     const [loading, setLoading] = useState(true)
     const [stateVerifyEmail,setStateVerifyEmail] = useState(false)
     const [stateResetPassword,setStateResetPassword] = useState(false)
-
+    const [viewCredential,setViewCredential] = useState(false)
+    const [messageVerifyError,setMessageVerifyError] = useState('')
     const register =async(datos,imagen)=>{
         setLoading(true)
         try {
@@ -209,9 +210,10 @@ export function AuthProvider ({children}){
 
     useEffect(() => {
       let timeoutId;
-      if (errorMessage) {
+      if (errorMessage || messageVerifyError) {
         timeoutId = setTimeout(() => {
           setErrorMessage(null);
+          setMessageVerifyError('')
         }, 3000);}
 
       return () => {
@@ -219,18 +221,31 @@ export function AuthProvider ({children}){
           clearTimeout(timeoutId);
         }};
 
-    }, [errorMessage]);
+    }, [errorMessage,messageVerifyError]);
     
     const logOut= async()=>{
          await signOut(auth)
     }
 
 
+    const verifyPassword = async (data)=>{
+      // console.log(data)
+      try {
+        await signInWithEmailAndPassword(auth,user?.email,data)
+        setViewCredential(true)
+      } catch (error) {
+        setViewCredential(false)
+        setMessageVerifyError("Credenciales incorrectas")
+      }
+    }
+
+    const ocultarIdHijo = () =>{
+      setViewCredential(false)
+    }
     useEffect(() => {
         setLoading(true)
-        
         const checkToken = async()=>{    
-            onAuthStateChanged(auth,async currentUser=>{
+          onAuthStateChanged(auth,async currentUser=>{
                 
                 if(currentUser){
                     await obtenerDatos(currentUser.uid)
@@ -253,7 +268,7 @@ export function AuthProvider ({children}){
 
     return (
         <AuthContext.Provider 
-            value={{register,verificarEmail,resetPassword,login,logOut,childrenRegister,stateResetPassword,stateVerifyEmail,userChildren,user,isAuthenticated,loading,cargandoDatos,errorMessage,userData}}
+            value={{register,ocultarIdHijo,verificarEmail,verifyPassword,resetPassword,login,logOut,childrenRegister,messageVerifyError,viewCredential,stateResetPassword,stateVerifyEmail,userChildren,user,isAuthenticated,loading,cargandoDatos,errorMessage,userData}}
         >
             {children}
         </AuthContext.Provider>

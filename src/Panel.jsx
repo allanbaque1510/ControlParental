@@ -11,8 +11,8 @@ import boy from './assets/boy.png'
 import { BiUser,BiSolidCalendar,BiCalendarStar,BiPhoneCall } from "react-icons/bi";
 import { FcPlus } from "react-icons/fc";
 const Panel = () => {
-    const {logOut,user,cargandoDatos,userData,userChildren,childrenRegister,verificarEmail,stateVerifyEmail} = useAuth()
-
+    const {logOut,user,cargandoDatos,userData,userChildren,viewCredential,ocultarIdHijo,messageVerifyError,childrenRegister,verificarEmail,stateVerifyEmail,verifyPassword} = useAuth()
+    const [restablecerContraseña, setRestablecerContraseña] = useState(false)
     const [inputState, setInputState] = useState("")
     const [imagenURL, setImagenURL] = useState(null);
     const [avatarState, setAvatarState] = useState(0);
@@ -22,7 +22,8 @@ const Panel = () => {
     const [activarControl, setActivarControl] = useState(false);
     const [hijoActivo, setHijoActivo] = useState(null);
     const [btnStatus, setBtnStatus] = useState(false)
-
+    const [btnStatusCopy, setBtnStatusCopy] = useState(false)
+    const [passwordVerify,setPasswordVerify] = useState('')
     const fechaActual = new Date();
     const [datosFormulario, setDatosFormulario] = useState({
         nombres: '',
@@ -109,7 +110,6 @@ const Panel = () => {
         setBtnStatus(false)
 
     }
-    console.log(user)
     const controlHijo = (indice)=>{
         setHijoActivo(userChildren[indice])
         setActivarControl(true)
@@ -175,7 +175,31 @@ const Panel = () => {
     </>)
     }else{
         return (
-            <div>
+            <div>   
+                {hijoActivo?
+                        <div style={restablecerContraseña?null:{opacity:'0', height:'0%', width:'0%', top:'-20%', right:'-20%'}} className="resetPassword">
+                            {viewCredential?
+                            <form onSubmit={(e)=>{e.preventDefault(); navigator.clipboard.writeText(hijoActivo.id); setBtnStatusCopy(true)}}>
+                                <button className='btnCerrar' type="button" onClick={()=>{setRestablecerContraseña(false);setPasswordVerify('');ocultarIdHijo();setBtnStatusCopy(false)}}>X</button>
+                                <h2>Credenciales del niño</h2>
+                                
+                                <input type="text" value={hijoActivo.id} readOnly={true}  name="hijoId" id="hijoId" />
+                                <button disabled={btnStatusCopy}  className='btnReg' type="submit">{btnStatusCopy?"Copiado!!":"Copiar"}</button>
+                            
+                            </form> 
+                            :
+                            <form onSubmit={(e)=>{e.preventDefault();verifyPassword(passwordVerify)}}>
+                                <button className='btnCerrar' type="button" onClick={()=>{setRestablecerContraseña(false);setPasswordVerify('');ocultarIdHijo() }}>X</button>
+                                <h2>Ingrese la contraseña para continuar</h2>
+                                { (messageVerifyError.length>1?<span className='errorMessage'>{messageVerifyError}</span>:null)}
+
+                                <input type="password" value={passwordVerify} onChange={(e)=>{setPasswordVerify(e.target.value)}} required={true} name="passwordV" id="passwordV" />
+                                <button   className='btnReg' type="submit">Enviar datos</button>
+                                
+                            </form>
+                            }
+                        </div>
+                        :null}
                 <nav className='navPanel'>
                     <img src={logo} alt="logo" />
                     <button className='btnReg' onClick={logOut}>Cerrar session</button>
@@ -198,7 +222,7 @@ const Panel = () => {
                             <div className="control">
                                 {hijoActivo!==null?
                                 <>
-                                <span className='titulo'><img src={hijoActivo.avatar ==1?boy:(hijoActivo.avatar==2?girl:null)} alt="avatar del hijo" />{hijoActivo.nombres} {hijoActivo.apellidos} - {differenceInYears(fechaActual, (new Date(hijoActivo.date)))} años <span style={{userSelect:'none'}} className='btnCerrar' onClick={()=>setActivarControl(false)}>x</span></span>
+                                <span className='titulo'><img src={hijoActivo.avatar ==1?boy:(hijoActivo.avatar==2?girl:null)}  onClick={()=>setRestablecerContraseña(true)} alt="avatar del hijo" />{hijoActivo.nombres} {hijoActivo.apellidos} - {differenceInYears(fechaActual, (new Date(hijoActivo.date)))} años <span style={{userSelect:'none'}} className='btnCerrar' onClick={()=>setActivarControl(false)}>x</span></span>
                                 <div className='contBotonesControl'>
                                     <button  type="button">SMS</button>
                                     <button type="button">GPS</button>
@@ -219,7 +243,7 @@ const Panel = () => {
                             {userChildren!==null ? 
                                 userChildren.map((children,index)=>(
                                     <button style={{userSelect:'none'}} className='agregarHijo' onClick={()=>controlHijo(index)} key={index}>
-                                        <img src={children.avatar ==1?boy:(children.avatar==2?girl:null)} alt="" />
+                                        <img src={children.avatar ==1?boy:(children.avatar==2?girl:null)}  alt="" />
                                         <span className='nameChildrens'>
                                             {children.nombres}
                                         </span>
@@ -230,6 +254,8 @@ const Panel = () => {
                                 ))
                                 : null}
                         </div>
+
+
 
                     </section>
                     :<div className='verifyEmailMessage'>
